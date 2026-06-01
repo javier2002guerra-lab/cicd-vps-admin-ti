@@ -1,0 +1,22 @@
+services:
+  app:
+    image: ${APP_IMAGE}
+    container_name: cicd-vps-admin-ti
+    restart: unless-stopped
+    ports:
+      - "80:3000"
+    environment:
+      NODE_ENV: production
+      GIT_SHA: ${GIT_SHA:-unknown}
+      DEPLOYED_AT: ${DEPLOYED_AT:-manual}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
